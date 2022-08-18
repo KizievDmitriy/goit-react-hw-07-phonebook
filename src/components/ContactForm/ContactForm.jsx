@@ -1,7 +1,12 @@
 import { useState } from 'react';
-import { nanoid } from 'nanoid';
-import { useDispatch, useSelector } from 'react-redux';
-import { addContact } from 'redux/contactSlice';
+// import { nanoid } from 'nanoid';
+// import { useDispatch, useSelector } from 'react-redux';
+// import { addContact } from 'redux/contactSlice';
+import {
+  useGetContactsQuery,
+  useAddContactMutation,
+} from 'redux/contactsAPI';
+
 import {
   FormContacts,
   LabelForm,
@@ -11,25 +16,26 @@ import {
 } from './ContactForm.styled';
 
 export const ContactForm = () => {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
-  const items = useSelector(state => state.items.items);
+  const { data: contacts } = useGetContactsQuery();
+  const [addContact, { isLoading }] = useAddContactMutation();
+ 
 
   const handleSubmit = e => {
     e.preventDefault();
 
-    const isAdded = items.find(item => item.name.toLowerCase() === name.toLowerCase());
+    const isAdded = contacts.find(contact => contact.name.toLowerCase() === name.toLowerCase() || contact.number === number );
       if (isAdded) {
-        alert(`${name} is already in contacts `);
-        return;
+        return alert(`${name} is already in contacts `);
+        
       }
     
-     dispatch(addContact({
-      id: nanoid(),
+     addContact({
       name,
       number,
-    }));
+    });
 
     reset();
   };
@@ -83,7 +89,7 @@ export const ContactForm = () => {
               required
             />
           </LabelForm>
-          <SubmitBtn type="submit">Add contact</SubmitBtn>
+          <SubmitBtn type="submit" disabled={isLoading}>Add contact</SubmitBtn>
         </FormContacts>
       </>
     );
