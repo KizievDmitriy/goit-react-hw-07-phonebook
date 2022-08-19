@@ -4,6 +4,7 @@ import {
   useAddContactMutation,
 } from 'redux/contactsAPI';
 import Notiflix from 'notiflix';
+import BeatLoader from "react-spinners/BeatLoader";
 import {
   FormContacts,
   LabelForm,
@@ -16,7 +17,7 @@ export const ContactForm = () => {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
   const { data: contacts } = useGetContactsQuery();
-  const [addContact, { isLoading }] = useAddContactMutation();
+  const [addContact, { isLoading, error }] = useAddContactMutation();
  
 
   const handleSubmit =async e => {
@@ -24,17 +25,16 @@ export const ContactForm = () => {
 
     const isAdded = contacts.find(contact => contact.name.toLowerCase() === name.toLowerCase() || contact.number === number );
       if (isAdded) {
-        return Notiflix.Notify.warning(`${name} is already in contacts `);
-        
+        return Notiflix.Notify.warning(`${name} is already in contacts `);  
       }
-    
-    await addContact({
-      name,
-      number,
-    });
-    Notiflix.Notify.success(`Contact is created!`);
-
-    reset();
+    try {
+      await addContact({name, number,});
+    Notiflix.Notify.success(`Contact ${name} is created!`);
+      reset();
+    } catch {
+      Notiflix.Notify.error(`Error,something went wrong!`);
+      console.log(error);
+    }  
   };
 
   const reset = () => {
@@ -86,7 +86,14 @@ export const ContactForm = () => {
               required
             />
           </LabelForm>
-          <SubmitBtn type="submit" disabled={isLoading}>Add contact</SubmitBtn>
+          <SubmitBtn type="submit" disabled={isLoading}>
+            {isLoading ?
+              <BeatLoader
+              color="#ffffff"
+              margin={5}
+              size={9}
+              /> : 'Add contact'}
+          </SubmitBtn>
         </FormContacts>
       </>
     );
