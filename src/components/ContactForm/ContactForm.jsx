@@ -1,7 +1,4 @@
 import { useState } from 'react';
-// import { nanoid } from 'nanoid';
-// import { useDispatch, useSelector } from 'react-redux';
-// import { addContact } from 'redux/contactSlice';
 import {
   useGetContactsQuery,
   useAddContactMutation,
@@ -16,7 +13,6 @@ import {
 } from './ContactForm.styled';
 
 export const ContactForm = () => {
-  // const dispatch = useDispatch();
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
   const { data: contacts } = useGetContactsQuery();
