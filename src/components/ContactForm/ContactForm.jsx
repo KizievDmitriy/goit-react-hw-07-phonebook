@@ -3,7 +3,7 @@ import {
   useGetContactsQuery,
   useAddContactMutation,
 } from 'redux/contactsAPI';
-
+import Notiflix from 'notiflix';
 import {
   FormContacts,
   LabelForm,
@@ -19,19 +19,20 @@ export const ContactForm = () => {
   const [addContact, { isLoading }] = useAddContactMutation();
  
 
-  const handleSubmit = e => {
+  const handleSubmit =async e => {
     e.preventDefault();
 
     const isAdded = contacts.find(contact => contact.name.toLowerCase() === name.toLowerCase() || contact.number === number );
       if (isAdded) {
-        return alert(`${name} is already in contacts `);
+        return Notiflix.Notify.warning(`${name} is already in contacts `);
         
       }
     
-     addContact({
+    await addContact({
       name,
       number,
     });
+    Notiflix.Notify.success(`Contact is created!`);
 
     reset();
   };
