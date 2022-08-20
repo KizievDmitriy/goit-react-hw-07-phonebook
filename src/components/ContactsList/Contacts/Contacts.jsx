@@ -1,11 +1,25 @@
 import PropTypes from 'prop-types';
 import BeatLoader from "react-spinners/BeatLoader";
+import Notiflix from 'notiflix';
 import { useDeleteContactMutation } from 'redux/contactsAPI';
+import { useEffect } from 'react';
 import { ItemContact, DeleteBtn, Name, Number } from './Contacts.styled';
 
 export const Contacts = ({ name, number, id }) => {
-  const [deleteContact, { isLoading }] = useDeleteContactMutation();
+  const [deleteContact, { isLoading, isSuccess }] = useDeleteContactMutation();
   
+   useEffect(() => {
+    return () => {
+      if (isSuccess) {
+        Notiflix.Notify.failure(
+          `You have removed ${name} from your list`
+        );
+      }
+    };
+  }, [ name, isSuccess]);
+
+
+
   return (
     <ItemContact>
       <Name>{name}</Name>
